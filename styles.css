@@ -1,308 +1,431 @@
-  <style>
-    :root{
-      --red:#E53935;
-      --yellow:#FBC02D;
-      --bg:#FFF8E1;
-      --text:#212121;
-      --muted:#6b6b6b;
-      --card:#ffffff;
-      --line:#eee;
-      --green:#2E7D32;
-      --radius:16px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:var(--bg);
-      color:var(--text);
-    }
-    header{
-      background:var(--red);
-      color:white;
-      padding:14px 16px;
-      position:sticky;
-      top:0;
-      z-index:10;
-      box-shadow:0 4px 16px rgba(0,0,0,.12);
-    }
-    header .row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
-    header .title{
-      font-size:17px;
-      font-weight:900;
-      letter-spacing:.2px;
-      margin:0;
-    }
-    header .badge{
-      font-size:12px;
-      font-weight:800;
-      background:rgba(255,255,255,.18);
-      border:1px solid rgba(255,255,255,.18);
-      padding:6px 10px;
-      border-radius:999px;
-      white-space:nowrap;
-    }
+:root {
+  --red: #E53935;
+  --yellow: #FBC02D;
+  --bg: #FFF8E1;
+  --text: #212121;
+  --muted: #6b6b6b;
+  --card: #ffffff;
+  --line: #eee;
+  --green: #2E7D32;
+  --radius: 16px;
+}
 
-    .wrap{
-      max-width:680px;
-      margin:0 auto;
-      padding:14px 14px 110px;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    .tabs{
-      display:flex;
-      gap:8px;
-      margin:12px 0;
-      flex-wrap:wrap;
-    }
-    .tab{
-      border:none;
-      padding:10px 12px;
-      border-radius:999px;
-      font-weight:900;
-      cursor:pointer;
-      background:rgba(0,0,0,.06);
-      color:var(--text);
-    }
-    .tab.active{
-      background:var(--yellow);
-      border:1px solid rgba(0,0,0,.08);
-    }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
 
-    .card{
-      background:var(--card);
-      border-radius:var(--radius);
-      border:1px solid rgba(0,0,0,.06);
-      box-shadow:0 6px 18px rgba(0,0,0,.06);
-      padding:12px;
-      margin-bottom:10px;
-    }
-    .muted{color:var(--muted); font-size:12px; font-weight:700}
+header {
+  background: var(--red);
+  color: white;
+  padding: 14px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .12);
+}
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1.2fr 0.8fr 1fr;
-      gap:10px;
-      align-items:center;
-    }
-    @media (max-width:540px){
-      .grid{ grid-template-columns: 1fr; }
-    }
+header .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
 
-    .prodName{font-weight:1000; font-size:15px; margin:0 0 4px}
-    .pricePill{
-      display:inline-block;
-      background:rgba(251,192,45,.40);
-      border:1px solid rgba(0,0,0,.06);
-      padding:2px 8px;
-      border-radius:999px;
-      font-weight:900;
-      font-size:12px;
-      margin-top:4px;
-    }
+header .title {
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: .2px;
+  margin: 0;
+}
 
-    input, select{
-      width:100%;
-      height:44px;
-      border-radius:12px;
-      border:1px solid rgba(0,0,0,.12);
-      padding:0 12px;
-      font-size:16px;
-      font-weight:800;
-      outline:none;
-      background:white;
-    }
-    .btn{
-      border:none;
-      border-radius:14px;
-      padding:12px 12px;
-      font-weight:1000;
-      cursor:pointer;
-      user-select:none;
-      touch-action:manipulation;
-    }
-    .btn:active{transform:scale(.98)}
-    .btnRed{background:var(--red); color:#fff}
-    .btnYellow{background:var(--yellow); color:var(--text); border:1px solid rgba(0,0,0,.10)}
-    .btnGreen{background:var(--green); color:#fff}
-    .btnGhost{background:transparent; border:1px solid rgba(0,0,0,.14); font-weight:1000}
-    .btnSmall{padding:10px 10px; border-radius:12px}
+header .badge {
+  font-size: 12px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, .18);
+  border: 1px solid rgba(255, 255, 255, .18);
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
 
-    .qtyRow{
-      display:flex; gap:8px; align-items:center;
-      background:rgba(0,0,0,.03);
-      border:1px solid rgba(0,0,0,.06);
-      border-radius:14px;
-      padding:6px;
-    }
-    .qtyRow input{
-      height:40px;
-      text-align:center;
-      font-size:18px;
-      font-weight:1000;
-      border-radius:12px;
-    }
-    .qtyBtn{
-      width:42px; height:40px;
-      display:grid; place-items:center;
-      background:var(--yellow);
-      border:1px solid rgba(0,0,0,.10);
-      border-radius:12px;
-      font-weight:1000;
-      cursor:pointer;
-    }
+.wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 14px 14px 110px;
+}
 
-    .bottom{
-      position:fixed;
-      left:0; right:0; bottom:0;
-      background:white;
-      border-top:1px solid rgba(0,0,0,.10);
-      box-shadow:0 -10px 30px rgba(0,0,0,.12);
-      padding:12px 14px 14px;
-    }
-    .bottom .inner{
-      max-width:680px;
-      margin:0 auto;
-      display:grid;
-      grid-template-columns: 1fr auto;
-      gap:12px;
-      align-items:center;
-    }
-    .totalBox .label{color:var(--muted); font-size:12px; font-weight:800}
-    .totalBox .total{font-size:28px; font-weight:1000; letter-spacing:.2px}
-    .primaryBig{min-width:160px; font-size:16px; padding:14px 14px; border-radius:16px}
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+  flex-wrap: wrap;
+}
 
-    .rowSpace{display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap}
-    .pill{
-      display:inline-flex; gap:6px; align-items:center;
-      background:rgba(0,0,0,.06);
-      border:1px solid rgba(0,0,0,.08);
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:900;
-    }
-    .ok{color:var(--green)}
-    .bad{color:var(--red)}
+.tab {
+  border: none;
+  padding: 10px 12px;
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+  background: rgba(0, 0, 0, .06);
+  color: var(--text);
+}
 
-    .hidden{display:none !important}
-    .divider{height:1px; background:var(--line); margin:10px 0}
+.tab.active {
+  background: var(--yellow);
+  border: 1px solid rgba(0, 0, 0, .08);
+}
 
-    @media (min-width: 700px){
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  border: 1px solid rgba(0, 0, 0, .06);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .06);
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+@media (max-width: 540px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.prodName {
+  font-weight: 1000;
+  font-size: 15px;
+  margin: 0 0 4px;
+}
+
+.pricePill {
+  display: inline-block;
+  background: rgba(251, 192, 45, .40);
+  border: 1px solid rgba(0, 0, 0, .06);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+input,
+select {
+  width: 100%;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, .12);
+  padding: 0 12px;
+  font-size: 16px;
+  font-weight: 800;
+  outline: none;
+  background: white;
+}
+
+.btn {
+  border: none;
+  border-radius: 14px;
+  padding: 12px 12px;
+  font-weight: 1000;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.btn:active {
+  transform: scale(.98);
+}
+
+.btnRed {
+  background: var(--red);
+  color: #fff;
+}
+
+.btnYellow {
+  background: var(--yellow);
+  color: var(--text);
+  border: 1px solid rgba(0, 0, 0, .10);
+}
+
+.btnGreen {
+  background: var(--green);
+  color: #fff;
+}
+
+.btnGhost {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, .14);
+  font-weight: 1000;
+}
+
+.btnSmall {
+  padding: 10px 10px;
+  border-radius: 12px;
+}
+
+.qtyRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: rgba(0, 0, 0, .03);
+  border: 1px solid rgba(0, 0, 0, .06);
+  border-radius: 14px;
+  padding: 6px;
+}
+
+.qtyRow input {
+  height: 40px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 1000;
+  border-radius: 12px;
+}
+
+.qtyBtn {
+  width: 42px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: var(--yellow);
+  border: 1px solid rgba(0, 0, 0, .10);
+  border-radius: 12px;
+  font-weight: 1000;
+  cursor: pointer;
+}
+
+.bottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+  border-top: 1px solid rgba(0, 0, 0, .10);
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, .12);
+  padding: 12px 14px 14px;
+}
+
+.bottom .inner {
+  max-width: 680px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.totalBox .label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.totalBox .total {
+  font-size: 28px;
+  font-weight: 1000;
+  letter-spacing: .2px;
+}
+
+.primaryBig {
+  min-width: 160px;
+  font-size: 16px;
+  padding: 14px 14px;
+  border-radius: 16px;
+}
+
+.rowSpace {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pill {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  background: rgba(0, 0, 0, .06);
+  border: 1px solid rgba(0, 0, 0, .08);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.ok {
+  color: var(--green);
+}
+
+.bad {
+  color: var(--red);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.divider {
+  height: 1px;
+  background: var(--line);
+  margin: 10px 0;
+}
+
+@media (min-width: 700px) {
   /* En desktop, on force le panier à s'afficher même s'il a la classe hidden */
-  #viewCart.hidden{
-    display:block !important;
+  #viewCart.hidden {
+    display: block !important;
   }
-  }
+}
 
+/* Modal */
+.modalBg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .35);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 50;
+}
 
-    /* Modal */
-    .modalBg{
-      position:fixed; inset:0;
-      background:rgba(0,0,0,.35);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      z-index:50;
-    }
-    .modal{
-      width:min(560px, 100%);
-      background:#fff;
-      border-radius:18px;
-      padding:14px;
-      box-shadow:0 18px 60px rgba(0,0,0,.25);
-    }
-    .modal h2{margin:6px 0 10px; font-size:16px; font-weight:1000}
-    .modal .actions{display:flex; gap:10px; justify-content:flex-end; margin-top:12px; flex-wrap:wrap}
-    .table{
-      width:100%;
-      border-collapse:collapse;
-      font-size:13px;
-    }
-    .table th,.table td{
-      border-bottom:1px solid #eee;
-      padding:8px 6px;
-      text-align:left;
-      vertical-align:middle;
-    }
-    .toggle{
-      display:inline-flex; align-items:center; gap:8px;
-      font-weight:900;
-      font-size:12px;
-      white-space:nowrap;
-    }
-    .toggle input{width:auto; height:auto}
-    /* ===== Responsive POS layout ===== */
+.modal {
+  width: min(560px, 100%);
+  background: #fff;
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, .25);
+}
 
+.modal h2 {
+  margin: 6px 0 10px;
+  font-size: 16px;
+  font-weight: 1000;
+}
 
-/* ===== Responsive POS layout (FORCÉ) ===== */
-.twoColWrap{
-  display:block; /* mobile */
+.modal .actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th,
+.table td {
+  border-bottom: 1px solid #eee;
+  padding: 8px 6px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 900;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.toggle input {
+  width: auto;
+  height: auto;
+}
+
+/* ===== Responsive POS layout ===== */
+.twoColWrap {
+  display: block;
 }
 
 /* Dès que c'est un peu large -> 2 colonnes */
-@media (min-width: 700px){
-  .twoColWrap{
-    display:grid !important;
+@media (min-width: 700px) {
+  .twoColWrap {
+    display: grid !important;
     grid-template-columns: 1.35fr 0.95fr;
-    gap:12px;
-    align-items:start;
+    gap: 12px;
+    align-items: start;
   }
 
-  @media (min-width: 700px){
   /* Si #viewCart a encore la classe .hidden, on la neutralise en desktop */
-  #viewCart.hidden{
-    display:block !important;
+  #viewCart.hidden {
+    display: block !important;
   }
-}
 
   /* IMPORTANT: en desktop, on force l'affichage du panier */
-  #viewCart{
-    display:block !important;
+  #viewCart {
+    display: block !important;
+    align-self: start;
   }
 
   /* On enlève le padding bas énorme si besoin */
-  .wrap{
+  .wrap {
     padding-bottom: 24px;
   }
 
   /* Le panier colle au scroll */
-#viewCart{
-  align-self:start;
-}
+  #viewCart {
+    align-self: start;
+  }
 
   /* On masque le bouton "Voir panier" (inutile) */
-  #goCartBtn{ display:none !important; }
-  #backToSaleBtn{ display:none !important; }
+  #goCartBtn {
+    display: none !important;
+  }
+
+  #backToSaleBtn {
+    display: none !important;
+  }
 }
 
-.payWrap{ display:none; }
+.payWrap {
+  display: none;
+}
 
-@media (min-width:700px){
-  .payWrap{
-    display:grid !important;
+@media (min-width: 700px) {
+  .payWrap {
+    display: grid !important;
     grid-template-columns: 0.95fr 1.05fr; /* panier | paiement */
-    gap:12px;
-    align-items:start;
+    gap: 12px;
+    align-items: start;
   }
 
   /* Un peu plus large en desktop */
-  .wrap{ max-width: 1100px; }
+  .wrap {
+    max-width: 1100px;
+  }
 
   /* option: sticky sur panier à gauche du paiement */
-  #viewCartPay{
+  #viewCartPay {
     position: sticky;
     top: 98px;
-    align-self:start;
+    align-self: start;
   }
 
   /* viewPay n’a pas besoin d’être sticky */
 }
-
-  </style>

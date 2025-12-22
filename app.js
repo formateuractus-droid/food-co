@@ -1,4 +1,3 @@
-<script>
 /** =========================
  *  0) TON URL GOOGLE SHEETS (Apps Script)
  *  ========================= */
@@ -767,6 +766,9 @@ function refreshUI(){
 goCartBtn.onclick = () => showView("cart");
 backToSaleBtn.onclick = () => showView("sale");
 backToCartBtn.onclick = () => showView("cart");
+reportBtn.onclick = () => showView("report");
+backFromReportBtn.onclick = () => showView("sale");
+exportReportBtn.onclick = exportReportCSV;
 
 bottomAction.onclick = () => {
   if(cartLines().length === 0) return;
@@ -796,32 +798,31 @@ cashReceived.addEventListener("input", computeCash);
 
 validateBtn.onclick = async () => {
   if (validateBtn.dataset.locked === "1") return;
-validateBtn.dataset.locked = "1";
-
   if(cartTotalCents() <= 0) return;
   if(!payMode) return;
+
+  validateBtn.dataset.locked = "1";
 
   // sécurité cash
   if(payMode === "CASH"){
     const receivedCents = centsFromEuroInput(cashReceived.value);
-    if(receivedCents < cartTotalCents()) return;
+    if(receivedCents < cartTotalCents()) {
+      validateBtn.dataset.locked = "0";
+      return;
+    }
   }
-
-  reportBtn.onclick = () => showView("report");
-backFromReportBtn.onclick = () => showView("sale");
-exportReportBtn.onclick = exportReportCSV;
 
   // Enregistre la vente offline
   recordSale(payMode);
-if(!viewReport.classList.contains("hidden")) renderReport();
+  if(!viewReport.classList.contains("hidden")) renderReport();
 
   // Vide le panier + retour vente
- cart = [];
-save(K_CART, cart);
-refreshUI();     // ✅ met à jour le panier à droite + total
-renderCart();    // ✅ sécurité (au cas où)
-payMode = null;
-cashReceived.value = "";
+  cart = [];
+  save(K_CART, cart);
+  refreshUI();     // ✅ met à jour le panier à droite + total
+  renderCart();    // ✅ sécurité (au cas où)
+  payMode = null;
+  cashReceived.value = "";
 
   // Sync automatique si possible
   await syncPending();
@@ -938,4 +939,3 @@ async function pushProducts(){
   }
 }
 
-</script>
