@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Food POS - Suivi ventes</title>
+<link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+  <header>
+    <div class="row">
+      <p class="title" id="headerTitle">Vente</p>
+      <div class="row" style="gap:8px">
+        <button class="btn btnGhost btnSmall" id="adminBtn" title="Admin (produits)">⚙️</button>
+        <button class="btn btnGhost btnSmall" id="reportBtn" title="Bilan du jour">📊</button>
+        <span class="badge" id="netBadge">🟢 En ligne</span>
+      </div>
+    </div>
+    <div class="row" style="margin-top:8px; gap:8px; flex-wrap:wrap">
+      <span class="badge" id="pendingBadge">⏳ 0 en attente</span>
+      <span class="badge" id="syncBadge">Sync: auto</span>
+    </div>
+  </header>
+
+<div class="wrap">
+
+  <div class="twoColWrap" id="twoColWrap">
+    <!-- VIEW: VENTE -->
+    <section id="viewSale">
+      <div class="tabs" id="tabs"></div>
+
+      <div class="card">
+        <div class="rowSpace">
+          <div>
+            <div class="muted">Astuce</div>
+            <div style="font-weight:1000">Tape la quantité (ex: <span class="pricePill">20</span>) puis <span class="pricePill">Ajouter</span>.</div>
+          </div>
+          <button class="btn btnYellow" id="goCartBtn">Voir panier</button>
+        </div>
+      </div>
+
+      <div id="productList"></div>
+    </section>
+
+    <!-- VIEW: PANIER -->
+    <section id="viewCart" class="hidden">
+      <div class="card">
+        <div class="rowSpace">
+          <div>
+            <div class="muted">Panier</div>
+            <div style="font-weight:1000">Ajuste les quantités (tu peux taper un nombre).</div>
+          </div>
+          <button class="btn btnGhost" id="backToSaleBtn">← Retour</button>
+        </div>
+      </div>
+
+      <div id="cartList"></div>
+    </section>
+  </div>
+<div class="payWrap hidden" id="payWrap">
+  <section id="viewCartPay"></section>
+
+    <!-- VIEW: PAIEMENT -->
+    <section id="viewPay" class="cardless">
+      <div class="card">
+        <div class="rowSpace">
+          <div>
+            <div class="muted">Encaissement</div>
+            <div style="font-weight:1000">Choisis Cash ou CB. Le rendu se calcule tout seul.</div>
+          </div>
+          <button class="btn btnGhost" id="backToCartBtn">← Retour</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="rowSpace">
+          <div>
+            <div class="muted">TOTAL</div>
+            <div style="font-size:34px; font-weight:1000" id="payTotal">0,00 €</div>
+          </div>
+          <div class="pill" id="payModePill">Mode: —</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="rowSpace">
+          <button class="btn btnYellow" id="modeCashBtn">CASH</button>
+          <button class="btn btnRed" id="modeCbBtn">CB</button>
+        </div>
+
+        <div id="cashArea" class="card hidden" style="margin-top:12px">
+          <div class="muted">Montant reçu</div>
+          <input id="cashReceived" inputmode="decimal" placeholder="Ex : 20" />
+          <div class="divider"></div>
+          <div class="muted">Résultat</div>
+          <div style="font-size:30px; font-weight:1000" id="cashResult">Rendu : 0,00 €</div>
+          <div class="muted bad hidden" id="cashWarn" style="margin-top:6px">Montant insuffisant</div>
+        </div>
+
+        <button class="btn btnRed primaryBig" id="validateBtn" style="width:100%; margin-top:12px">
+          VALIDER LA VENTE
+        </button>
+        <div class="muted" id="validateHint" style="margin-top:8px">Le bouton passe au vert quand tout est OK.</div>
+      </div>
+    </section>
+<!-- VIEW: BILAN -->
+<section id="viewReport" class="hidden">
+  <div class="card">
+    <div class="rowSpace">
+      <div>
+        <div class="muted">Bilan du jour</div>
+        <div style="font-weight:1000" id="reportDateLabel">—</div>
+      </div>
+      <button class="btn btnGhost" id="backFromReportBtn">← Retour</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="rowSpace">
+      <div>
+        <div class="muted">Chiffre d’affaires</div>
+        <div style="font-size:34px; font-weight:1000" id="reportTotal">0,00 €</div>
+      </div>
+      <div class="pill" id="reportCount">0 ventes</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="rowSpace">
+      <div class="pill" id="reportCash">Cash : 0,00 €</div>
+      <div class="pill" id="reportCb">CB : 0,00 €</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="rowSpace">
+      <div style="font-weight:1000">Ventes par produit</div>
+      <button class="btn btnGhost btnSmall" id="exportReportBtn">Exporter CSV</button>
+    </div>
+    <div class="divider"></div>
+    <div id="reportByProduct"></div>
+  </div>
+</section>
+
+  </div>
+
+  <!-- Bottom bar (total + action) -->
+  <div class="bottom" id="bottomBar">
+    <div class="inner">
+      <div class="totalBox">
+        <div class="label">TOTAL</div>
+        <div class="total" id="bottomTotal">0,00 €</div>
+      </div>
+      <button class="btn btnRed primaryBig" id="bottomAction">ENCaisser</button>
+    </div>
+  </div>
+
+  <!-- Modal Admin -->
+  <div class="modalBg" id="modalBg">
+    <div class="modal">
+      <div class="rowSpace">
+        <h2 id="modalTitle">Admin</h2>
+        <button class="btn btnGhost btnSmall" id="closeModal">✕</button>
+      </div>
+
+      <!-- PIN -->
+      <div id="pinBlock">
+        <div class="muted">Saisis le PIN admin</div>
+        <input id="pinInput" inputmode="numeric" placeholder="PIN (par défaut 1234)" />
+        <div class="actions">
+          <button class="btn btnGhost" id="pinCancel">Annuler</button>
+          <button class="btn btnGreen" id="pinOk">OK</button>
+        </div>
+        <div class="muted" style="margin-top:8px">Astuce: tu peux changer le PIN plus tard.</div>
+      </div>
+
+      <!-- Admin panel -->
+      <div id="adminPanel" class="hidden">
+        <div class="card" style="margin:0 0 10px">
+          <div class="rowSpace">
+            <div>
+              <div class="muted">Produits</div>
+              <div style="font-weight:1000">Ajouter / modifier / désactiver.</div>
+            </div>
+            <button class="btn btnYellow" id="addProductBtn">+ Ajouter</button>
+          </div>
+        </div>
+
+        <table class="table" id="prodTable"></table>
+
+        <div class="divider"></div>
+
+        <div class="rowSpace">
+          <button class="btn btnGhost" id="exportSalesBtn">Exporter CSV</button>
+          <button class="btn btnGreen" id="forceSyncBtn">Forcer Sync</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="rowSpace">
+          <button class="btn btnGhost" id="changePinBtn">Changer PIN</button>
+          <button class="btn btnGhost bad" id="dangerClearBtn">Réinitialiser (tout)</button>
+        </div>
+
+        <div class="muted" style="margin-top:8px">
+          Réinitialiser efface produits + ventes sur cet appareil (à éviter sauf besoin).
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
