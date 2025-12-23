@@ -154,8 +154,11 @@ const DEFAULT_CATS = ["Samoussas","Bonbons piment","Boissons"];
 const DEFAULT_PRODUCTS = [
   {id:"S-FRO", cat:"Samoussas", name:"Samoussa fromage", price_cents:50, active:true},
   {id:"S-POU", cat:"Samoussas", name:"Samoussa poulet",  price_cents:50, active:true},
+  {id:"S-POI", cat:"Samoussas", name:"Samoussa poisson",  price_cents:50, active:true},
   {id:"BP-CLA", cat:"Bonbons piment", name:"Bonbon piment", price_cents:80, active:true},
-  {id:"BO-EAU", cat:"Boissons", name:"Eau", price_cents:100, active:true},
+  {id:"BO-EAU", cat:"Boissons", name:"Eau", price_cents:200, active:true},
+  {id:"BO-COC", cat:"Boissons", name:"Coca", price_cents:250, active:true},
+  {id:"BO-COC", cat:"Boissons", name:"Thé", price_cents:250, active:true},
 ];
 
 let products = load(K_PRODUCTS, null);
