@@ -1,4 +1,3 @@
-<script>
 /** =========================
  *  0) TON URL GOOGLE SHEETS (Apps Script)
  *  ========================= */
@@ -937,5 +936,3 @@ async function pushProducts(){
     console.log("pushProducts failed:", e.message);
   }
 }
-
-</script>
