@@ -177,8 +177,6 @@ if(!Array.isArray(products) || products.length === 0){
   }
 }
 
-let products = mergeDefaultProducts(load(K_PRODUCTS, null));
-
 let cart = load(K_CART, []); // [{prod_id, qty}]
 if(!Array.isArray(cart)) cart = [];
 
@@ -941,9 +939,20 @@ async function pullProducts(){
     const res = await fetch(url);
     const data = await res.json();
     if(data && data.ok && Array.isArray(data.products)){
-      // On remplace le catalogue local par le catalogue central
-      products = data.products;
-      save(K_PRODUCTS, products);
+      // Ne pas écraser le catalogue local par une liste vide
+      if(data.products.length === 0){
+        // Si le serveur est vide, on garde les produits locaux (ou les défauts)
+        products = load(K_PRODUCTS, products);
+        if(!Array.isArray(products) || products.length === 0){
+          products = DEFAULT_PRODUCTS.slice();
+          save(K_PRODUCTS, products);
+        }
+      } else {
+        // On remplace le catalogue local par le catalogue central
+        products = data.products;
+        save(K_PRODUCTS, products);
+      }
+
       renderSale();
       if(isDesktop()) renderCart();
     }
