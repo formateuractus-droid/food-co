@@ -165,6 +165,16 @@ let products = load(K_PRODUCTS, null);
 if(!Array.isArray(products) || products.length === 0){
   products = DEFAULT_PRODUCTS;
   save(K_PRODUCTS, products);
+} else {
+  // merge missing defaults so new products added in code appear for existing users
+  const merged = [...products];
+  for(const p of DEFAULT_PRODUCTS){
+    if(!merged.find(x => x.id === p.id)) merged.push(p);
+  }
+  if(merged.length !== products.length){
+    products = merged;
+    save(K_PRODUCTS, products);
+  }
 }
 
 let cart = load(K_CART, []); // [{prod_id, qty}]
