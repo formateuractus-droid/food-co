@@ -158,7 +158,7 @@ const DEFAULT_PRODUCTS = [
   {id:"BP-CLA", cat:"Bonbons piment", name:"Bonbon piment", price_cents:80, active:true},
   {id:"BO-EAU", cat:"Boissons", name:"Eau", price_cents:200, active:true},
   {id:"BO-COC", cat:"Boissons", name:"Coca", price_cents:250, active:true},
-  {id:"BO-COC", cat:"Boissons", name:"Thé", price_cents:250, active:true},
+  {id:"BO-THE", cat:"Boissons", name:"Thé", price_cents:250, active:true},
 ];
 
 let products = load(K_PRODUCTS, null);
@@ -176,6 +176,8 @@ if(!Array.isArray(products) || products.length === 0){
     save(K_PRODUCTS, products);
   }
 }
+
+let products = mergeDefaultProducts(load(K_PRODUCTS, null));
 
 let cart = load(K_CART, []); // [{prod_id, qty}]
 if(!Array.isArray(cart)) cart = [];
@@ -275,29 +277,29 @@ viewReport.classList.toggle("hidden", name !== "report");
   if(name === "cart"){ renderCart(); }
   if(name === "pay"){  renderPay(); }
   if(name === "report"){ renderReport(); }
-const desktop = window.matchMedia("(min-width:700px)").matches;
+  const desktop = window.matchMedia("(min-width:700px)").matches;
 
-if(name === "pay" && desktop){
-  // En desktop: on cache la grille vente/panier
-  document.getElementById("twoColWrap").classList.add("hidden");
+  if(name === "pay"){
+    // En desktop: on cache la grille vente/panier
+    document.getElementById("twoColWrap").classList.add("hidden");
 
-  // On montre payWrap (panier + paiement)
-  payWrap.classList.remove("hidden");
+    // On montre payWrap (panier + paiement)
+    payWrap.classList.remove("hidden");
 
-  // On affiche la vue pay (à droite) et on rend le panier pay
-  viewPay.classList.remove("hidden");
-  renderCartPay();
-  renderPay();
+    // On affiche la vue pay (à droite) et on rend le panier pay
+    viewPay.classList.remove("hidden");
+    renderCartPay();
+    renderPay();
 
-  // Bottom bar cachée en paiement
-  bottomBar.classList.add("hidden");
-  headerTitle.textContent = "Encaissement";
-  return;
-}
+    // Bottom bar cachée en paiement
+    bottomBar.classList.add("hidden");
+    headerTitle.textContent = "Encaissement";
+    return;
+  }
 
-// sinon (mobile ou autres vues) :
-if(payWrap) payWrap.classList.add("hidden");
-document.getElementById("twoColWrap").classList.remove("hidden");
+  // sinon (mobile ou autres vues) :
+  if(payWrap) payWrap.classList.add("hidden");
+  document.getElementById("twoColWrap").classList.remove("hidden");
 
 }
 
@@ -817,39 +819,44 @@ cashReceived.addEventListener("input", computeCash);
 
 validateBtn.onclick = async () => {
   if (validateBtn.dataset.locked === "1") return;
-validateBtn.dataset.locked = "1";
 
-  if(cartTotalCents() <= 0) return;
+  const total = cartTotalCents();
+  if(total <= 0) return;
   if(!payMode) return;
 
   // sécurité cash
   if(payMode === "CASH"){
     const receivedCents = centsFromEuroInput(cashReceived.value);
-    if(receivedCents < cartTotalCents()) return;
+    if(receivedCents < total) return;
   }
 
-  reportBtn.onclick = () => showView("report");
-backFromReportBtn.onclick = () => showView("sale");
-exportReportBtn.onclick = exportReportCSV;
+  validateBtn.dataset.locked = "1";
 
-  // Enregistre la vente offline
-  recordSale(payMode);
-if(!viewReport.classList.contains("hidden")) renderReport();
+  try {
+    reportBtn.onclick = () => showView("report");
+    backFromReportBtn.onclick = () => showView("sale");
+    exportReportBtn.onclick = exportReportCSV;
 
-  // Vide le panier + retour vente
- cart = [];
-save(K_CART, cart);
-refreshUI();     // ✅ met à jour le panier à droite + total
-renderCart();    // ✅ sécurité (au cas où)
-payMode = null;
-cashReceived.value = "";
+    // Enregistre la vente offline
+    recordSale(payMode);
+    if(!viewReport.classList.contains("hidden")) renderReport();
 
-  // Sync automatique si possible
-  await syncPending();
+    // Vide le panier + retour vente
+    cart = [];
+    save(K_CART, cart);
+    refreshUI();     // ✅ met à jour le panier à droite + total
+    renderCart();    // ✅ sécurité (au cas où)
+    payMode = null;
+    cashReceived.value = "";
 
-  // Retour à vente
-  showView("sale");
-  validateBtn.dataset.locked = "0";
+    // Sync automatique si possible
+    await syncPending();
+
+    // Retour à vente
+    showView("sale");
+  } finally {
+    validateBtn.dataset.locked = "0";
+  }
 
 };
 window.addEventListener("resize", applyResponsiveMode);
