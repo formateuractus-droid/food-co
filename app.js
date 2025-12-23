@@ -177,8 +177,6 @@ if(!Array.isArray(products) || products.length === 0){
   }
 }
 
-let products = mergeDefaultProducts(load(K_PRODUCTS, null));
-
 let cart = load(K_CART, []); // [{prod_id, qty}]
 if(!Array.isArray(cart)) cart = [];
 
