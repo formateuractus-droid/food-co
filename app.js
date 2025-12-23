@@ -911,12 +911,21 @@ async function pullProducts(){
     const url = SHEET_ENDPOINT + "?action=products&t=" + Date.now();
     const res = await fetch(url);
     const data = await res.json();
-    if(data && data.ok && Array.isArray(data.products)){
-      // On remplace le catalogue local par le catalogue central
+
+    // On met à jour le catalogue uniquement si des produits sont disponibles côté Sheets.
+    if(data && data.ok && Array.isArray(data.products) && data.products.length > 0){
       products = data.products;
       save(K_PRODUCTS, products);
       renderSale();
       if(isDesktop()) renderCart();
+    } else {
+      // Fallback: on conserve ou rétablit les produits locaux pour éviter un écran vide.
+      products = load(K_PRODUCTS, DEFAULT_PRODUCTS);
+      if(!Array.isArray(products) || products.length === 0){
+        products = DEFAULT_PRODUCTS;
+        save(K_PRODUCTS, products);
+      }
+      renderSale();
     }
   }catch(e){
     console.log("pullProducts failed:", e.message);
