@@ -165,6 +165,16 @@ let products = load(K_PRODUCTS, null);
 if(!Array.isArray(products) || products.length === 0){
   products = DEFAULT_PRODUCTS;
   save(K_PRODUCTS, products);
+} else {
+  // merge missing defaults so new products added in code appear for existing users
+  const merged = [...products];
+  for(const p of DEFAULT_PRODUCTS){
+    if(!merged.find(x => x.id === p.id)) merged.push(p);
+  }
+  if(merged.length !== products.length){
+    products = merged;
+    save(K_PRODUCTS, products);
+  }
 }
 
 let cart = load(K_CART, []); // [{prod_id, qty}]
@@ -175,6 +185,11 @@ if(!Array.isArray(sales)) sales = [];
 
 let adminPin = localStorage.getItem(K_PIN);
 if(!adminPin){ localStorage.setItem(K_PIN, "1234"); adminPin = "1234"; }
+
+function getCategories(){
+  const cats = [...new Set(products.map(p => p.cat).filter(Boolean))];
+  return cats.length > 0 ? cats : DEFAULT_CATS;
+}
 
 /** =========================
  *  3) UI - ÉLÉMENTS
@@ -238,7 +253,7 @@ const payWrap = document.getElementById("payWrap");
 /** =========================
  *  4) NAVIGATION VUES
  *  ========================= */
-let currentCat = DEFAULT_CATS[0];
+let currentCat = getCategories()[0];
 let payMode = null; // "CASH" | "CB"
 let lastPayTotalCents = 0;
 
@@ -316,7 +331,11 @@ function cartTotalCents(){
  *  ========================= */
 function renderTabs(){
   tabs.innerHTML = "";
-  for(const cat of DEFAULT_CATS){
+  const cats = getCategories();
+
+  if(!cats.includes(currentCat)) currentCat = cats[0];
+
+  for(const cat of cats){
     const b = document.createElement("button");
     b.className = "tab" + (cat===currentCat ? " active" : "");
     b.textContent = cat;
