@@ -281,7 +281,7 @@
   #backToSaleBtn{ display:none !important; }
 }
 
-.payWrap{ display:none; }
+.payWrap{ display:block; }
 
 @media (min-width:700px){
   .payWrap{
