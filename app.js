@@ -161,41 +161,20 @@ const DEFAULT_PRODUCTS = [
   {id:"BO-THE", cat:"Boissons", name:"Thé", price_cents:250, active:true},
 ];
 
-function mergeDefaultProducts(stored){
-  if(!Array.isArray(stored) || stored.length === 0) return DEFAULT_PRODUCTS;
-
-  const map = new Map();
-  for(const p of stored){
-    if(!p || !p.id) continue;
-    if(!map.has(p.id)) map.set(p.id, p);
+let products = load(K_PRODUCTS, null);
+if(!Array.isArray(products) || products.length === 0){
+  products = DEFAULT_PRODUCTS;
+  save(K_PRODUCTS, products);
+} else {
+  // merge missing defaults so new products added in code appear for existing users
+  const merged = [...products];
+  for(const p of DEFAULT_PRODUCTS){
+    if(!merged.find(x => x.id === p.id)) merged.push(p);
   }
-
-  const merged = [];
-  let changed = false;
-
-  for(const def of DEFAULT_PRODUCTS){
-    const existing = map.get(def.id);
-    if(existing){
-      const active = typeof existing.active === "boolean" ? existing.active : def.active;
-      const updated = {...def, active};
-      if(
-        existing.name !== updated.name ||
-        existing.cat !== updated.cat ||
-        existing.price_cents !== updated.price_cents ||
-        existing.active !== updated.active
-      ) changed = true;
-      merged.push(updated);
-      map.delete(def.id);
-    } else {
-      merged.push(def);
-      changed = true;
-    }
+  if(merged.length !== products.length){
+    products = merged;
+    save(K_PRODUCTS, products);
   }
-
-  for(const p of map.values()) merged.push(p);
-
-  if(changed || merged.length !== stored.length) save(K_PRODUCTS, merged);
-  return merged;
 }
 
 let products = mergeDefaultProducts(load(K_PRODUCTS, null));
