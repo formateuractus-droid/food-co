@@ -289,6 +289,10 @@ viewReport.classList.toggle("hidden", name !== "report");
     renderCartPay();
     renderPay();
 
+    if(!desktop){
+      window.scrollTo(0, 0);
+    }
+
     // Bottom bar cachée en paiement
     bottomBar.classList.add("hidden");
     headerTitle.textContent = "Encaissement";
@@ -362,18 +366,19 @@ function renderSale(){
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
-      <div class="grid">
-        <div>
+      <div class="saleGrid">
+        <div class="saleInfo">
           <p class="prodName">${p.name}</p>
-          <span class="pricePill">${euro(p.price_cents)}</span>
+          <div class="saleMeta">
+            <span class="pricePill">${euro(p.price_cents)}</span>
+            <div class="saleQty">
+              <span class="muted">Qté</span>
+              <input inputmode="numeric" pattern="[0-9]*" id="q_${p.id}" value="" placeholder="Qté" />
+            </div>
+          </div>
         </div>
 
-        <div>
-          <div class="muted">Quantité</div>
-          <input inputmode="numeric" pattern="[0-9]*" id="q_${p.id}" value="" placeholder="Qté" />
-        </div>
-
-        <div>
+        <div class="saleAction">
           <button class="btn btnRed" id="add_${p.id}">AJOUTER</button>
         </div>
       </div>
@@ -427,15 +432,16 @@ function renderCart(){
       <div class="rowSpace">
         <div>
           <div style="font-weight:1000">${l.name}</div>
-          <div class="muted">${euro(l.price_cents)} • Sous-total : <span style="font-weight:1000">${euro(l.price_cents*l.qty)}</span></div>
+          <div class="cartMeta">
+            <div class="muted cartPrice">${euro(l.price_cents)} • Sous-total : <span style="font-weight:1000">${euro(l.price_cents*l.qty)}</span></div>
+            <div class="qtyRow">
+              <div class="qtyBtn" data-minus="${l.prod_id}">–</div>
+              <input inputmode="numeric" pattern="[0-9]*" value="${l.qty}" data-input="${l.prod_id}" />
+              <div class="qtyBtn" data-plus="${l.prod_id}">+</div>
+            </div>
+          </div>
         </div>
         <button class="btn btnGhost btnSmall" data-remove="${l.prod_id}">🗑️</button>
-      </div>
-      <div class="divider"></div>
-      <div class="qtyRow">
-        <div class="qtyBtn" data-minus="${l.prod_id}">–</div>
-        <input inputmode="numeric" pattern="[0-9]*" value="${l.qty}" data-input="${l.prod_id}" />
-        <div class="qtyBtn" data-plus="${l.prod_id}">+</div>
       </div>
     `;
     cartList.appendChild(item);
@@ -776,7 +782,7 @@ function changePin(){
 
 function refreshUI(){
   updateBottom();
-  if (window.matchMedia("(min-width:700px)").matches){
+  if (window.matchMedia("(min-width:700px)").matches || !viewPay.classList.contains("hidden")){
     renderCart();
     renderCartPay();
   }
