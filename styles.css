@@ -139,6 +139,12 @@
       border-radius:14px;
       padding:6px;
     }
+    .cartMeta{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:4px;
+    }
     .qtyRow input{
       height:40px;
       text-align:center;
@@ -261,6 +267,20 @@
   }
 }
 
+@media (max-width: 700px){
+  .cartMeta{
+    flex-direction:row;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .cartPrice{
+    flex:1;
+    min-width:160px;
+  }
+}
+
   /* IMPORTANT: en desktop, on force l'affichage du panier */
   #viewCart{
     display:block !important;
@@ -282,6 +302,9 @@
 }
 
 .payWrap{ display:block; }
+#viewCartPay{
+  margin-bottom:12px;
+}
 
 @media (min-width:700px){
   .payWrap{
