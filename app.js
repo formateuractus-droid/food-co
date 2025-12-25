@@ -366,18 +366,19 @@ function renderSale(){
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
-      <div class="grid">
-        <div>
+      <div class="saleGrid">
+        <div class="saleInfo">
           <p class="prodName">${p.name}</p>
-          <span class="pricePill">${euro(p.price_cents)}</span>
+          <div class="saleMeta">
+            <span class="pricePill">${euro(p.price_cents)}</span>
+            <div class="saleQty">
+              <span class="muted">Qté</span>
+              <input inputmode="numeric" pattern="[0-9]*" id="q_${p.id}" value="" placeholder="Qté" />
+            </div>
+          </div>
         </div>
 
-        <div>
-          <div class="muted">Quantité</div>
-          <input inputmode="numeric" pattern="[0-9]*" id="q_${p.id}" value="" placeholder="Qté" />
-        </div>
-
-        <div>
+        <div class="saleAction">
           <button class="btn btnRed" id="add_${p.id}">AJOUTER</button>
         </div>
       </div>

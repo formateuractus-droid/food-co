@@ -92,6 +92,41 @@
     @media (max-width:540px){
       .grid{ grid-template-columns: 1fr; }
     }
+    .saleGrid{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:10px;
+      align-items:center;
+    }
+    .saleMeta{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:6px;
+    }
+    .saleQty{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      background:rgba(0,0,0,.03);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:12px;
+      padding:6px 8px;
+    }
+    .saleQty input{
+      width:70px;
+      height:34px;
+      font-size:14px;
+      padding:0 8px;
+    }
+    .saleQty .muted{
+      font-size:11px;
+    }
+    @media (max-width:540px){
+      .saleGrid{ grid-template-columns: 1fr; }
+      .saleAction .btn{ width:100%; }
+    }
 
     .prodName{font-weight:1000; font-size:15px; margin:0 0 4px}
     .pricePill{
