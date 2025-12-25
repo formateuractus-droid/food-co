@@ -205,7 +205,6 @@ const viewPay  = document.getElementById("viewPay");
 const tabs = document.getElementById("tabs");
 const productList = document.getElementById("productList");
 
-const cartList = document.getElementById("cartList");
 
 const bottomBar = document.getElementById("bottomBar");
 const bottomTotal = document.getElementById("bottomTotal");
@@ -260,8 +259,10 @@ let lastPayTotalCents = 0;
 function showView(name){
   // AVANT: viewCart dépendait du nom
 // APRÈS: en desktop on garde le panier visible
-viewSale.classList.toggle("hidden", name !== "sale" && name !== "cart");
-viewCart.classList.toggle("hidden", (name !== "cart") && !isDesktop());
+const desktop = isDesktop();
+const showCartOnMobile = name === "sale" || name === "cart";
+viewSale.classList.toggle("hidden", name !== "sale" && !desktop);
+viewCart.classList.toggle("hidden", (!desktop && !showCartOnMobile) || (desktop && name === "pay"));
 viewPay.classList.toggle("hidden",  name !== "pay");
 viewReport.classList.toggle("hidden", name !== "report");
 
@@ -288,6 +289,10 @@ viewReport.classList.toggle("hidden", name !== "report");
     viewPay.classList.remove("hidden");
     renderCartPay();
     renderPay();
+
+    if(!desktop){
+      window.scrollTo(0, 0);
+    }
 
     // Bottom bar cachée en paiement
     bottomBar.classList.add("hidden");
@@ -362,18 +367,19 @@ function renderSale(){
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
-      <div class="grid">
-        <div>
+      <div class="saleGrid">
+        <div class="saleInfo">
           <p class="prodName">${p.name}</p>
-          <span class="pricePill">${euro(p.price_cents)}</span>
+          <div class="saleMeta">
+            <span class="pricePill">${euro(p.price_cents)}</span>
+            <div class="saleQty">
+              <span class="muted">Qté</span>
+              <input inputmode="numeric" pattern="[0-9]*" id="q_${p.id}" value="" placeholder="Qté" />
+            </div>
+          </div>
         </div>
 
-        <div>
-          <div class="muted">Quantité</div>
-          <input inputmode="numeric" pattern="[0-9]*" id="q_${p.id}" value="" placeholder="Qté" />
-        </div>
-
-        <div>
+        <div class="saleAction">
           <button class="btn btnRed" id="add_${p.id}">AJOUTER</button>
         </div>
       </div>
@@ -407,10 +413,11 @@ function renderCart(){
   updateBottom();
 
   const lines = cartLines();
-  cartList.innerHTML = "";
+  const listRoot = viewCart;
+  listRoot.querySelectorAll(".cartItem").forEach(item => item.remove());
 
   if(lines.length === 0){
-    cartList.innerHTML = `<div class="card"><div style="font-weight:1000">Panier vide</div><div class="muted">Ajoute des produits depuis l’écran Vente.</div></div>`;
+    listRoot.insertAdjacentHTML("beforeend", `<div class="card cartItem"><div style="font-weight:1000">Panier vide</div><div class="muted">Ajoute des produits depuis l’écran Vente.</div></div>`);
     bottomAction.textContent = "ENCaisser";
     bottomAction.disabled = true;
     bottomAction.style.opacity = ".5";
@@ -422,27 +429,28 @@ function renderCart(){
 
   for(const l of lines){
     const item = document.createElement("div");
-    item.className = "card";
+    item.className = "card cartItem";
     item.innerHTML = `
       <div class="rowSpace">
         <div>
           <div style="font-weight:1000">${l.name}</div>
-          <div class="muted">${euro(l.price_cents)} • Sous-total : <span style="font-weight:1000">${euro(l.price_cents*l.qty)}</span></div>
+          <div class="cartMeta">
+            <div class="muted cartPrice">${euro(l.price_cents)} • Sous-total : <span style="font-weight:1000">${euro(l.price_cents*l.qty)}</span></div>
+            <div class="qtyRow">
+              <div class="qtyBtn" data-minus="${l.prod_id}">–</div>
+              <input inputmode="numeric" pattern="[0-9]*" value="${l.qty}" data-input="${l.prod_id}" />
+              <div class="qtyBtn" data-plus="${l.prod_id}">+</div>
+            </div>
+          </div>
         </div>
         <button class="btn btnGhost btnSmall" data-remove="${l.prod_id}">🗑️</button>
       </div>
-      <div class="divider"></div>
-      <div class="qtyRow">
-        <div class="qtyBtn" data-minus="${l.prod_id}">–</div>
-        <input inputmode="numeric" pattern="[0-9]*" value="${l.qty}" data-input="${l.prod_id}" />
-        <div class="qtyBtn" data-plus="${l.prod_id}">+</div>
-      </div>
     `;
-    cartList.appendChild(item);
+    listRoot.appendChild(item);
   }
 
   // handlers
-  cartList.querySelectorAll("[data-remove]").forEach(btn=>{
+  listRoot.querySelectorAll("[data-remove]").forEach(btn=>{
     btn.onclick = () => {
       const id = btn.getAttribute("data-remove");
       cart = cart.filter(x => x.prod_id !== id);
@@ -451,7 +459,7 @@ function renderCart(){
     };
   });
 
-  cartList.querySelectorAll("[data-minus]").forEach(btn=>{
+  listRoot.querySelectorAll("[data-minus]").forEach(btn=>{
     btn.onclick = () => {
       const id = btn.getAttribute("data-minus");
       const line = cart.find(x=>x.prod_id===id);
@@ -463,7 +471,7 @@ function renderCart(){
     };
   });
 
-  cartList.querySelectorAll("[data-plus]").forEach(btn=>{
+  listRoot.querySelectorAll("[data-plus]").forEach(btn=>{
     btn.onclick = () => {
       const id = btn.getAttribute("data-plus");
       const line = cart.find(x=>x.prod_id===id);
@@ -474,7 +482,7 @@ function renderCart(){
     };
   });
 
-  cartList.querySelectorAll("[data-input]").forEach(inp=>{
+  listRoot.querySelectorAll("[data-input]").forEach(inp=>{
     inp.oninput = () => {
       const id = inp.getAttribute("data-input");
       const raw = (inp.value||"").trim();
@@ -776,7 +784,7 @@ function changePin(){
 
 function refreshUI(){
   updateBottom();
-  if (window.matchMedia("(min-width:700px)").matches){
+  if (window.matchMedia("(min-width:700px)").matches || !viewPay.classList.contains("hidden") || !viewCart.classList.contains("hidden")){
     renderCart();
     renderCartPay();
   }
