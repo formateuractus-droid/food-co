@@ -139,6 +139,19 @@
       border-radius:14px;
       padding:6px;
     }
+    .cartMeta{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      align-items:center;
+      gap:10px;
+      margin-top:4px;
+    }
+    .cartMeta .qtyRow{
+      flex-wrap:nowrap;
+    }
+    .cartMeta .qtyRow input{
+      width:64px;
+    }
     .qtyRow input{
       height:40px;
       text-align:center;
@@ -261,6 +274,12 @@
   }
 }
 
+@media (max-width: 700px){
+  .cartPrice{
+    min-width:160px;
+  }
+}
+
   /* IMPORTANT: en desktop, on force l'affichage du panier */
   #viewCart{
     display:block !important;
@@ -282,6 +301,9 @@
 }
 
 .payWrap{ display:block; }
+#viewCartPay{
+  margin-bottom:12px;
+}
 
 @media (min-width:700px){
   .payWrap{

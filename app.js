@@ -289,6 +289,10 @@ viewReport.classList.toggle("hidden", name !== "report");
     renderCartPay();
     renderPay();
 
+    if(!desktop){
+      window.scrollTo(0, 0);
+    }
+
     // Bottom bar cachée en paiement
     bottomBar.classList.add("hidden");
     headerTitle.textContent = "Encaissement";
@@ -427,15 +431,16 @@ function renderCart(){
       <div class="rowSpace">
         <div>
           <div style="font-weight:1000">${l.name}</div>
-          <div class="muted">${euro(l.price_cents)} • Sous-total : <span style="font-weight:1000">${euro(l.price_cents*l.qty)}</span></div>
+          <div class="cartMeta">
+            <div class="muted cartPrice">${euro(l.price_cents)} • Sous-total : <span style="font-weight:1000">${euro(l.price_cents*l.qty)}</span></div>
+            <div class="qtyRow">
+              <div class="qtyBtn" data-minus="${l.prod_id}">–</div>
+              <input inputmode="numeric" pattern="[0-9]*" value="${l.qty}" data-input="${l.prod_id}" />
+              <div class="qtyBtn" data-plus="${l.prod_id}">+</div>
+            </div>
+          </div>
         </div>
         <button class="btn btnGhost btnSmall" data-remove="${l.prod_id}">🗑️</button>
-      </div>
-      <div class="divider"></div>
-      <div class="qtyRow">
-        <div class="qtyBtn" data-minus="${l.prod_id}">–</div>
-        <input inputmode="numeric" pattern="[0-9]*" value="${l.qty}" data-input="${l.prod_id}" />
-        <div class="qtyBtn" data-plus="${l.prod_id}">+</div>
       </div>
     `;
     cartList.appendChild(item);
@@ -776,7 +781,7 @@ function changePin(){
 
 function refreshUI(){
   updateBottom();
-  if (window.matchMedia("(min-width:700px)").matches){
+  if (window.matchMedia("(min-width:700px)").matches || !viewPay.classList.contains("hidden")){
     renderCart();
     renderCartPay();
   }
