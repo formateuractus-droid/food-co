@@ -205,7 +205,6 @@ const viewPay  = document.getElementById("viewPay");
 const tabs = document.getElementById("tabs");
 const productList = document.getElementById("productList");
 
-const cartList = document.getElementById("cartList");
 
 const bottomBar = document.getElementById("bottomBar");
 const bottomTotal = document.getElementById("bottomTotal");
@@ -260,7 +259,7 @@ let lastPayTotalCents = 0;
 function showView(name){
   // AVANT: viewCart dépendait du nom
 // APRÈS: en desktop on garde le panier visible
-viewSale.classList.toggle("hidden", name !== "sale" && name !== "cart");
+viewSale.classList.toggle("hidden", name !== "sale" && !(name === "cart" && isDesktop()));
 viewCart.classList.toggle("hidden", (name !== "cart") && !isDesktop());
 viewPay.classList.toggle("hidden",  name !== "pay");
 viewReport.classList.toggle("hidden", name !== "report");
@@ -412,10 +411,11 @@ function renderCart(){
   updateBottom();
 
   const lines = cartLines();
-  cartList.innerHTML = "";
+  const listRoot = viewCart;
+  listRoot.querySelectorAll(".cartItem").forEach(item => item.remove());
 
   if(lines.length === 0){
-    cartList.innerHTML = `<div class="card"><div style="font-weight:1000">Panier vide</div><div class="muted">Ajoute des produits depuis l’écran Vente.</div></div>`;
+    listRoot.insertAdjacentHTML("beforeend", `<div class="card cartItem"><div style="font-weight:1000">Panier vide</div><div class="muted">Ajoute des produits depuis l’écran Vente.</div></div>`);
     bottomAction.textContent = "ENCaisser";
     bottomAction.disabled = true;
     bottomAction.style.opacity = ".5";
@@ -427,7 +427,7 @@ function renderCart(){
 
   for(const l of lines){
     const item = document.createElement("div");
-    item.className = "card";
+    item.className = "card cartItem";
     item.innerHTML = `
       <div class="rowSpace">
         <div>
@@ -444,11 +444,11 @@ function renderCart(){
         <button class="btn btnGhost btnSmall" data-remove="${l.prod_id}">🗑️</button>
       </div>
     `;
-    cartList.appendChild(item);
+    listRoot.appendChild(item);
   }
 
   // handlers
-  cartList.querySelectorAll("[data-remove]").forEach(btn=>{
+  listRoot.querySelectorAll("[data-remove]").forEach(btn=>{
     btn.onclick = () => {
       const id = btn.getAttribute("data-remove");
       cart = cart.filter(x => x.prod_id !== id);
@@ -457,7 +457,7 @@ function renderCart(){
     };
   });
 
-  cartList.querySelectorAll("[data-minus]").forEach(btn=>{
+  listRoot.querySelectorAll("[data-minus]").forEach(btn=>{
     btn.onclick = () => {
       const id = btn.getAttribute("data-minus");
       const line = cart.find(x=>x.prod_id===id);
@@ -469,7 +469,7 @@ function renderCart(){
     };
   });
 
-  cartList.querySelectorAll("[data-plus]").forEach(btn=>{
+  listRoot.querySelectorAll("[data-plus]").forEach(btn=>{
     btn.onclick = () => {
       const id = btn.getAttribute("data-plus");
       const line = cart.find(x=>x.prod_id===id);
@@ -480,7 +480,7 @@ function renderCart(){
     };
   });
 
-  cartList.querySelectorAll("[data-input]").forEach(inp=>{
+  listRoot.querySelectorAll("[data-input]").forEach(inp=>{
     inp.oninput = () => {
       const id = inp.getAttribute("data-input");
       const raw = (inp.value||"").trim();
