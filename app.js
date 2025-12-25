@@ -289,6 +289,10 @@ viewReport.classList.toggle("hidden", name !== "report");
     renderCartPay();
     renderPay();
 
+    if(!desktop){
+      window.scrollTo(0, 0);
+    }
+
     // Bottom bar cachée en paiement
     bottomBar.classList.add("hidden");
     headerTitle.textContent = "Encaissement";
@@ -776,7 +780,7 @@ function changePin(){
 
 function refreshUI(){
   updateBottom();
-  if (window.matchMedia("(min-width:700px)").matches){
+  if (window.matchMedia("(min-width:700px)").matches || !viewPay.classList.contains("hidden")){
     renderCart();
     renderCartPay();
   }
