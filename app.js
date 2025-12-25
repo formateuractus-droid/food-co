@@ -152,9 +152,9 @@ function applyResponsiveMode(){
  *  ========================= */
 const DEFAULT_CATS = ["Samoussas","Bonbons piment","Boissons"];
 const DEFAULT_PRODUCTS = [
-  {id:"S-FRO", cat:"Samoussas", name:"Samoussa fromage", price_cents:50, active:true},
-  {id:"S-POU", cat:"Samoussas", name:"Samoussa poulet",  price_cents:50, active:true},
-  {id:"S-POI", cat:"Samoussas", name:"Samoussa poisson",  price_cents:50, active:true},
+  {id:"S-FRO", cat:"Samoussas", name:"Fromage", price_cents:50, active:true},
+  {id:"S-POU", cat:"Samoussas", name:"Poulet",  price_cents:50, active:true},
+  {id:"S-POI", cat:"Samoussas", name:"Poisson",  price_cents:50, active:true},
   {id:"BP-CLA", cat:"Bonbons piment", name:"Bonbon piment", price_cents:80, active:true},
   {id:"BO-EAU", cat:"Boissons", name:"Eau", price_cents:200, active:true},
   {id:"BO-COC", cat:"Boissons", name:"Coca", price_cents:250, active:true},
@@ -259,9 +259,8 @@ let lastPayTotalCents = 0;
 function showView(name){
   // AVANT: viewCart dépendait du nom
 // APRÈS: en desktop on garde le panier visible
-const desktop = isDesktop();
-viewSale.classList.toggle("hidden", name !== "sale" && !desktop);
-viewCart.classList.toggle("hidden", (name !== "cart") && !desktop);
+viewSale.classList.toggle("hidden", name !== "sale" && !(name === "cart" && isDesktop()));
+viewCart.classList.toggle("hidden", (name !== "cart") && !isDesktop());
 viewPay.classList.toggle("hidden",  name !== "pay");
 viewReport.classList.toggle("hidden", name !== "report");
 
@@ -783,7 +782,7 @@ function changePin(){
 
 function refreshUI(){
   updateBottom();
-  if (window.matchMedia("(min-width:700px)").matches || !viewPay.classList.contains("hidden") || !viewCart.classList.contains("hidden")){
+  if (window.matchMedia("(min-width:700px)").matches || !viewPay.classList.contains("hidden")){
     renderCart();
     renderCartPay();
   }
