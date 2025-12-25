@@ -282,6 +282,9 @@
 }
 
 .payWrap{ display:block; }
+#viewCartPay{
+  margin-bottom:12px;
+}
 
 @media (min-width:700px){
   .payWrap{
