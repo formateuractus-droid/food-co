@@ -431,15 +431,16 @@ function renderCart(){
       <div class="rowSpace">
         <div>
           <div style="font-weight:1000">${l.name}</div>
-          <div class="muted">${euro(l.price_cents)} • Sous-total : <span style="font-weight:1000">${euro(l.price_cents*l.qty)}</span></div>
+          <div class="cartMeta">
+            <div class="muted cartPrice">${euro(l.price_cents)} • Sous-total : <span style="font-weight:1000">${euro(l.price_cents*l.qty)}</span></div>
+            <div class="qtyRow">
+              <div class="qtyBtn" data-minus="${l.prod_id}">–</div>
+              <input inputmode="numeric" pattern="[0-9]*" value="${l.qty}" data-input="${l.prod_id}" />
+              <div class="qtyBtn" data-plus="${l.prod_id}">+</div>
+            </div>
+          </div>
         </div>
         <button class="btn btnGhost btnSmall" data-remove="${l.prod_id}">🗑️</button>
-      </div>
-      <div class="divider"></div>
-      <div class="qtyRow">
-        <div class="qtyBtn" data-minus="${l.prod_id}">–</div>
-        <input inputmode="numeric" pattern="[0-9]*" value="${l.qty}" data-input="${l.prod_id}" />
-        <div class="qtyBtn" data-plus="${l.prod_id}">+</div>
       </div>
     `;
     cartList.appendChild(item);
